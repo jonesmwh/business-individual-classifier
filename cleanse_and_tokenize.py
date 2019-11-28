@@ -49,11 +49,8 @@ def calculate_token_counts(list_tokenized_business, list_tokenized_individual):
 
 
 def output_stats(tokenizer,test,train, business_names, individual_names):
-    print(business_names["name"].tolist())
     list_tokenized_business = tokenizer.texts_to_sequences(business_names["name"].tolist())
     list_tokenized_individual = tokenizer.texts_to_sequences(individual_names["name"].tolist())
-    print(list_tokenized_business)
-    print(list_tokenized_individual)
     (business_tokens_count, individual_tokens_count, shared_tokens_count) = calculate_token_counts(list_tokenized_business, list_tokenized_individual)
     logging.info(f"training set shape: {train.shape}")
     logging.info(f"test set shape: {test.shape}")
@@ -68,7 +65,7 @@ def output_stats(tokenizer,test,train, business_names, individual_names):
 if __name__ == "__main__":
 
     business_names_raw: pd.DataFrame = pd.read_csv(business_names_path, dtype=str)[[name_col]]
-    individual_names_raw: pd.DataFrame = pd.read_csv(individual_names_path,dtype=str)[[name_col]]
+    individual_names_raw: pd.DataFrame = pd.read_csv(individual_names_path,dtype=str,usecols=[0], names=[name_col], header=None)[[name_col]]
 
     business_names = preprocess_raw_data(business_names_raw)
     individual_names = preprocess_raw_data(individual_names_raw)
