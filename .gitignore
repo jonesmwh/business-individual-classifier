@@ -1,0 +1,5 @@
+.idea/
+venv/
+*.pickle
+test.csv
+train.csv
