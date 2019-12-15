@@ -1,5 +1,5 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import numpy as np
+import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
 from random import sample
@@ -15,10 +15,24 @@ multiple_spaces_pattern = r"""\s+"""
 output_dir = ""
 name_col = "name"
 max_features = 20000
-logging.getLogger().setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+stats_out = True
+if stats_out:
+    logger.info("Custom stats logging is enabled")
+
+
+
+
 stats_out = True
 business_names_path = "test/data/companies_sorted.csv" #"/kaggle/input/free-7-million-company-dataset/companies_sorted.csv"
-individual_names_path = "test/data/individuals_sorted.csv" # "/kaggle/input/generate-fake-names/generated_full_names.csv"
+individual_names_path = "test/data/individuals_generated.csv" # "/kaggle/input/generate-fake-names/generated_full_names.csv"
 
 
 def remove_invalid_characters(input_text: str) -> str:
@@ -52,21 +66,20 @@ def output_stats(tokenizer,test,train, business_names, individual_names):
     list_tokenized_business = tokenizer.texts_to_sequences(business_names["name"].tolist())
     list_tokenized_individual = tokenizer.texts_to_sequences(individual_names["name"].tolist())
     (business_tokens_count, individual_tokens_count, shared_tokens_count) = calculate_token_counts(list_tokenized_business, list_tokenized_individual)
-    logging.info(f"training set shape: {train.shape}")
-    logging.info(f"test set shape: {test.shape}")
-    logging.info(f"Number of individual name samples: {individual_names.count()}")
-    logging.info(f"Number of business name samples: {business_names.count()}")
-    logging.info(f"Number of names shared between individual and business name sets: {len(list(set(individual_names) & set(business_names)))}")
-    logging.info(f"Number of distinct business tokens: {business_tokens_count}")
-    logging.info(f"Number of distinct individual tokens: {individual_tokens_count}")
-    logging.info(f"Number of tokens shared between business and individual datasets: {shared_tokens_count}")
+    logger.info(f"training set shape: {train.shape}")
+    logger.info(f"test set shape: {test.shape}")
+    logger.info(f"Number of individual name samples: {individual_names.count()}")
+    logger.info(f"Number of business name samples: {business_names.count()}")
+    logger.info(f"Number of names shared between individual and business name sets: {len(list(set(individual_names) & set(business_names)))}")
+    logger.info(f"Number of distinct business tokens: {business_tokens_count}")
+    logger.info(f"Number of distinct individual tokens: {individual_tokens_count}")
+    logger.info(f"Number of tokens shared between business and individual datasets: {shared_tokens_count}")
 
 
 if __name__ == "__main__":
 
     business_names_raw: pd.DataFrame = pd.read_csv(business_names_path, dtype=str)[[name_col]]
-    individual_names_raw: pd.DataFrame = pd.read_csv(individual_names_path,dtype=str,usecols=[0], names=[name_col], header=None)[[name_col]]
-
+    individual_names_raw: pd.DataFrame = pd.read_csv(individual_names_path,dtype=str)[[name_col]]
     business_names = preprocess_raw_data(business_names_raw)
     individual_names = preprocess_raw_data(individual_names_raw)
 
