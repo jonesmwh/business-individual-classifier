@@ -32,11 +32,11 @@ if __name__ == "__main__":
                       optimizer='adam',
                       metrics=['accuracy'])
 
-    mc = ModelCheckpoint('best_model.h5', monitor='val_loss', mode='min', verbose=1, save_best_only=True)
+    mc = ModelCheckpoint('test/data/best_model.h5', monitor='val_loss', mode='min', verbose=1, save_best_only=True)
 
     batch_size = 16384
     epochs = 30
     model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1, callbacks=[mc])
 
     model.summary()
-    model.save('final_model.h5')
+    model.save('test/data/final_model.h5')
