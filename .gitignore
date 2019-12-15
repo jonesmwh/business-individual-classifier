@@ -1,5 +1,5 @@
 .idea/
 venv/
-*.pickle
-test.csv
-train.csv
+test/data/*.pickle
+*test*.csv
+*train*.csv
