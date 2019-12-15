@@ -6,7 +6,7 @@ from typing import List
 faker.Faker.seed(4321)
 approx_name_count = 20
 output_path = 'test/data/individuals_generated.csv'
-output_csv_header = "names"
+output_csv_header = "name"
 faker_regions = [
 "en_AU",
 "en_CA",
@@ -39,4 +39,5 @@ if __name__ == "__main__":
 
     distinct_full_names = generate_individual_names(faker_regions, approx_name_count)
     list_to_csv(distinct_full_names, output_csv_header)
+
 

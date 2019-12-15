@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 import pandas as pd
 import sklearn
@@ -27,9 +29,6 @@ stats_out = True
 if stats_out:
     logger.info("Custom stats logging is enabled")
 
-
-
-
 stats_out = True
 business_names_path = "test/data/companies_sorted.csv" #"/kaggle/input/free-7-million-company-dataset/companies_sorted.csv"
 individual_names_path = "test/data/individuals_generated.csv" # "/kaggle/input/generate-fake-names/generated_full_names.csv"
@@ -55,16 +54,16 @@ def preprocess_raw_data(data_frame: pd.DataFrame) -> pd.DataFrame:
     return preprocessed
 
 
-def calculate_token_counts(list_tokenized_business, list_tokenized_individual):
+def calculate_token_counts(list_tokenized_business: List[List[int]], list_tokenized_individual: List[List[int]]):
     business_tokens = set([item for sublist in list_tokenized_business for item in sublist])
     individual_tokens = set([item for sublist in list_tokenized_individual for item in sublist])
     shared_tokens_count = len(list(set(business_tokens) & set(individual_tokens)))
     return (len(business_tokens), len(individual_tokens), shared_tokens_count)
 
 
-def output_stats(tokenizer,test,train, business_names, individual_names):
-    list_tokenized_business = tokenizer.texts_to_sequences(business_names["name"].tolist())
-    list_tokenized_individual = tokenizer.texts_to_sequences(individual_names["name"].tolist())
+def output_stats(tokenizer: Tokenizer, test: pd.DataFrame, train: pd.DataFrame, business_names: pd.DataFrame, individual_names: pd.DataFrame):
+    list_tokenized_business = tokenizer.texts_to_sequences(business_names[name_col].tolist())
+    list_tokenized_individual = tokenizer.texts_to_sequences(individual_names[name_col].tolist())
     (business_tokens_count, individual_tokens_count, shared_tokens_count) = calculate_token_counts(list_tokenized_business, list_tokenized_individual)
     logger.info(f"training set shape: {train.shape}")
     logger.info(f"test set shape: {test.shape}")
@@ -87,8 +86,8 @@ if __name__ == "__main__":
     individual_names["is_business"] = 0
 
     combined_names = business_names.append(individual_names).drop_duplicates().reindex()
-    train=combined_names.copy().sample(frac=0.8,random_state=42)
-    test=combined_names.copy().drop(train.index).sample(frac=1).reset_index(drop=True)
+    train = combined_names.copy().sample(frac=0.8,random_state=42)
+    test = combined_names.copy().drop(train.index).sample(frac=1).reset_index(drop=True)
 
     train.to_csv(output_dir + "train.csv", index = False, header=False)
     test.to_csv(output_dir + "test.csv", index = False, header=False)
