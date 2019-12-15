@@ -1,8 +1,10 @@
 from typing import List
 
+import numpy
 import numpy as np
 import pandas as pd
 import sklearn
+from keras_preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 from random import sample
 from keras.preprocessing.text import Tokenizer
@@ -11,12 +13,15 @@ import h5py
 import os
 import re
 import logging
+from utils import list_to_csv
 
 invalid_letters_pattern = r"""[^a-z0-9\s\'\-\.\&]"""
 multiple_spaces_pattern = r"""\s+"""
-output_dir = ""
+output_dir = "test/data/"
 name_col = "name"
+y_col = "is_business"
 max_features = 20000
+maxlen = 10
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
@@ -30,8 +35,8 @@ if stats_out:
     logger.info("Custom stats logging is enabled")
 
 stats_out = True
-business_names_path = "test/data/companies_sorted.csv" #"/kaggle/input/free-7-million-company-dataset/companies_sorted.csv"
-individual_names_path = "test/data/individuals_generated.csv" # "/kaggle/input/generate-fake-names/generated_full_names.csv"
+business_names_path = output_dir + "companies_sorted.csv" #"/kaggle/input/free-7-million-company-dataset/companies_sorted.csv"
+individual_names_path = output_dir + "individuals_generated.csv" # "/kaggle/input/generate-fake-names/generated_full_names.csv"
 
 
 def remove_invalid_characters(input_text: str) -> str:
@@ -75,6 +80,13 @@ def output_stats(tokenizer: Tokenizer, test: pd.DataFrame, train: pd.DataFrame, 
     logger.info(f"Number of tokens shared between business and individual datasets: {shared_tokens_count}")
 
 
+def generate_model_input(tokenizer: Tokenizer, data: pd.DataFrame) -> (List[List[int]], List[str]):
+    list_tokenized = tokenizer.texts_to_sequences(data[name_col].tolist())
+    X = pad_sequences(list_tokenized, maxlen=maxlen)
+    y = data[y_col]
+    return X, y
+
+
 if __name__ == "__main__":
 
     business_names_raw: pd.DataFrame = pd.read_csv(business_names_path, dtype=str)[[name_col]]
@@ -82,24 +94,30 @@ if __name__ == "__main__":
     business_names = preprocess_raw_data(business_names_raw)
     individual_names = preprocess_raw_data(individual_names_raw)
 
-    business_names["is_business"] = 1
-    individual_names["is_business"] = 0
+    business_names[y_col] = 1
+    individual_names[y_col] = 0
 
-    combined_names = business_names.append(individual_names).drop_duplicates().reindex()
+    combined_names = business_names.append(individual_names).drop_duplicates().dropna().reindex()
     train = combined_names.copy().sample(frac=0.8,random_state=42)
     test = combined_names.copy().drop(train.index).sample(frac=1).reset_index(drop=True)
 
-    train.to_csv(output_dir + "train.csv", index = False, header=False)
-    test.to_csv(output_dir + "test.csv", index = False, header=False)
+    train.to_csv(output_dir + "train_untokenized.csv", index = False, header=False)
+    test.to_csv(output_dir + "test_untokenized.csv", index = False, header=False)
 
     tokenizer = Tokenizer(num_words=max_features)
     tokenizer.fit_on_texts(combined_names[name_col].tolist())
 
-    pickle_out = open(output_dir + "tokenizer.pickle", "wb")
-    pickle.dump(tokenizer, pickle_out)
+    (X_train, y_train) = generate_model_input(tokenizer, train)
+    (X_test, y_test) = generate_model_input(tokenizer, test)
+
+    numpy.savetxt(output_dir  + "X_train.csv", X_train, delimiter=",", fmt="%i")
+    numpy.savetxt(output_dir  + "X_test.csv", X_test, delimiter=",", fmt="%i")
+    list_to_csv(y_train,output_dir + "y_train.csv")
+    list_to_csv(y_test,output_dir  + "y_test.csv")
+
+    pickle_out = open(output_dir + "train_test_tokenizer.pickle", "wb")
+    pickle.dump((tokenizer, X_train, y_train, X_test, y_test), pickle_out)
     pickle_out.close()
 
     if stats_out:
         output_stats(tokenizer, test, train, business_names, individual_names)
-
-

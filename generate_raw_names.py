@@ -3,6 +3,8 @@ import csv
 import faker
 from typing import List
 
+from utils import list_to_csv
+
 faker.Faker.seed(4321)
 approx_name_count = 20
 output_path = 'test/data/individuals_generated.csv'
@@ -26,18 +28,9 @@ def generate_individual_names(regions: List[str], approx_name_count: int) -> Lis
     distinct_full_names = [*{*generated_full_names}]
     return distinct_full_names
 
-
-def list_to_csv(list: List[str], header: str):
-    with open(output_path, 'w', newline='') as writeFile:
-        writer = csv.writer(writeFile,delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow([header])
-        for element in list:
-            writer.writerow([element])
-    writeFile.close()
-
 if __name__ == "__main__":
 
     distinct_full_names = generate_individual_names(faker_regions, approx_name_count)
-    list_to_csv(distinct_full_names, output_csv_header)
+    list_to_csv( distinct_full_names, output_path, output_csv_header)
 
 
