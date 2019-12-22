@@ -5,3 +5,4 @@ test/data/*.pickle
 *train*.csv
 *__pycache__*
 *.egg-info*
+data/

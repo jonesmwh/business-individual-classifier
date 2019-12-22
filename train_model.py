@@ -6,17 +6,25 @@ from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 import h5py
 import pickle
+from utils import load_config
 
-max_features = 40
-maxlen = 30
+config = load_config()
+input_dir = config["rel_paths"]["cleansed_data_root"].get(str)
+output_dir = config["rel_paths"]["models_root"].get(str)
 
-if __name__ == "__main__":
-    (X_train, y_train, X_test, y_test) = pickle.load(open("test/data/train_test_tokenizer.pickle", "rb"))
+training_data_path = input_dir + config["cleanse_and_tokenize"]["output_filename"].get(str)
+final_output_path = output_dir + config["train_model"]["secondary_model_filename"].get(str)
+output_path = output_dir + config["train_model"]["best_model_filename"].get(str)
+history_path = output_dir + config["train_model"]["history_filename"].get(str)
+embedding_size = config["train_model"]["embedding_size"].get(int)
 
-    inp = Input(shape=(maxlen, ))
-    embed_size = 128
+def run_train_model():
+    (X_train, y_train, X_test, y_test, tokenized_length, max_features) = pickle.load(open(training_data_path, "rb"))
+
+    inp = Input(shape=(tokenized_length, ))
+    embed_size = embedding_size
     x = Embedding(max_features, embed_size)(inp)
-    x = LSTM(60, return_sequences=True,name='lstm_layer')(x)
+    x = LSTM(60, return_sequences=True, name='lstm_layer')(x)
     x = GlobalMaxPool1D()(x)
     x = Dropout(0.1)(x)
     x = Dense(50, activation="relu")(x)
@@ -28,11 +36,21 @@ if __name__ == "__main__":
                       optimizer='adam',
                       metrics=['accuracy'])
 
-    mc = ModelCheckpoint('test/data/best_model.h5', monitor='val_loss', mode='min', verbose=1, save_best_only=True)
+    mc = ModelCheckpoint(output_path, monitor='val_loss', mode='min', verbose=0, save_best_only=True)
 
-    batch_size = 16384
-    epochs = 30
-    model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1, callbacks=[mc])
+    batch_size = config["train_model"]["batch_size"].get(int)
+    epochs = config["train_model"]["epochs"].get(int)
+    validation_split = config["train_model"]["validation_split"].get()
+
+    history = model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=validation_split, callbacks=[mc])
 
     model.summary()
-    model.save('test/data/final_model.h5')
+    model.save(final_output_path)
+
+    pickle_out = open(history_path, "wb")
+    pickle.dump(history, pickle_out)
+    pickle_out.close()
+
+
+if __name__ == "__main__":
+    run_train_model()

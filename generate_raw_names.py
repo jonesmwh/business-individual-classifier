@@ -1,20 +1,19 @@
-import os
-import csv
 import faker
 from typing import List
+from utils import list_to_csv, load_config
 
-from utils import list_to_csv
+config = load_config()
 
 faker.Faker.seed(4321)
-approx_name_count = 20
-output_path = 'test/data/individuals_generated.csv'
+name_count = config["generate_raw_names"]["name_count"].get(int)
+output_path = config["rel_paths"]["raw_data_root"].get(str) + config["generate_raw_names"]["output_filename"].get(str)
 output_csv_header = "name"
 faker_regions = [
-"en_AU",
-"en_CA",
-"en_GB",
-"en_NZ",
-"en_US"
+    "en_AU",
+    "en_CA",
+    "en_GB",
+    "en_NZ",
+    "en_US"
 ]
 
 
@@ -28,9 +27,11 @@ def generate_individual_names(regions: List[str], approx_name_count: int) -> Lis
     distinct_full_names = [*{*generated_full_names}]
     return distinct_full_names
 
+
+def run_name_generation():
+    distinct_names = generate_individual_names(faker_regions, name_count)
+    list_to_csv(distinct_names, output_path, output_csv_header)
+
+
 if __name__ == "__main__":
-
-    distinct_full_names = generate_individual_names(faker_regions, approx_name_count)
-    list_to_csv( distinct_full_names, output_path, output_csv_header)
-
-
+    run_name_generation()

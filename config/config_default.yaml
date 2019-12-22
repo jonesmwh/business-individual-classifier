@@ -1,0 +1,32 @@
+rel_paths:
+  test_data_root: "test/data/"
+  models_root: "data/models/"
+  raw_data_root: "data/raw/"
+  cleansed_data_root: "data/cleansed/"
+  interim_debug_root: "data/interim/"
+
+generate_raw_names:
+  output_filename: "individuals_generated.csv"
+  name_count: 20
+
+cleanse_and_tokenize:
+  output_filename: "train_test.pickle"
+  businesses_filename: "companies_sorted.csv"
+  individuals_filename: "individuals_generated.csv"
+  tokenized_length: 110
+  encoding_space_size: 200
+
+train_model:
+  best_model_filename: "best_model.h5"
+  secondary_model_filename: "secondary_model.h5"
+  history_filename: "history.pickle"
+  embedding_size: 128
+  batch_size: 16384
+  epochs: 30
+  validation_split: 0.1
+
+
+
+
+
+
