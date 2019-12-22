@@ -1,7 +1,3 @@
-import sys, os, re, csv, codecs, numpy as np, pandas as pd
-import matplotlib.pyplot as plt
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
 from keras.layers import Dense, Input, LSTM, Embedding, Dropout, Activation
 from keras.layers import Bidirectional, GlobalMaxPool1D
 from keras.models import Model
@@ -11,11 +7,11 @@ from keras.callbacks import ModelCheckpoint
 import h5py
 import pickle
 
-max_features = 20000
-maxlen = 10
+max_features = 40
+maxlen = 30
 
 if __name__ == "__main__":
-    (tokenizer,X_train, y_train, X_test, y_test) = pickle.load(open("test/data/train_test_tokenizer.pickle", "rb"))
+    (X_train, y_train, X_test, y_test) = pickle.load(open("test/data/train_test_tokenizer.pickle", "rb"))
 
     inp = Input(shape=(maxlen, ))
     embed_size = 128
