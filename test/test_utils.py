@@ -1,7 +1,6 @@
 from typing import List
 
 import pytest
-import confuse
 
 from cleanse_and_tokenize import run_cleanse_tokenize
 from generate_raw_names import run_name_generation
@@ -16,6 +15,7 @@ def test_encode_decode():
     decoded = decode(encoded)
 
     assert decoded == sample_input
+
 
 def test_pad_tokens():
     test_cases = [[1], [1, 2], [1, 2, 3, 4, 5]]
