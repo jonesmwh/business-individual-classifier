@@ -118,15 +118,15 @@ def run_cleanse_tokenize():
     (X_train, y_train) = generate_model_input(train)
     (X_test, y_test) = generate_model_input(test)
 
-    if write_out_interim_data: write_interim_out_csv(X_train, X_test, y_train, y_test, train, test)
-
-    pickle_out = open(output_path, "wb")
-    pickle.dump((X_train, y_train, X_test, y_test, tokenized_length, max_features), pickle_out)
-    pickle_out.close()
+    if write_out_interim_data:
+        write_interim_out_csv(X_train, X_test, y_train, y_test, train, test)
 
     if stats_out:
         output_stats(test, train, business_names, individual_names)
 
+    pickle_out = open(output_path, "wb")
+    pickle.dump((X_train, y_train, X_test, y_test, tokenized_length, max_features), pickle_out, protocol=4)
+    pickle_out.close()
 
 
 if __name__ == "__main__":

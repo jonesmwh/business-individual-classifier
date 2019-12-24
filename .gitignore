@@ -5,4 +5,8 @@ test/data/*.pickle
 *train*.csv
 *__pycache__*
 *.egg-info*
-data/
+data/cleansed/
+data/interim/
+data/raw/
+dev_only_*
+*kaggle.yaml

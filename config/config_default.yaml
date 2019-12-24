@@ -11,18 +11,18 @@ generate_raw_names:
 
 cleanse_and_tokenize:
   output_filename: "train_test.pickle"
-  businesses_filename: "companies_sorted.csv"
-  individuals_filename: "individuals_generated.csv"
-  tokenized_length: 110
+  businesses_filename: "linkedin_company_names.csv"
+  individuals_filename: "imdb_names.csv"
+  tokenized_length: 120
   encoding_space_size: 200
 
 train_model:
-  best_model_filename: "best_model.h5"
-  secondary_model_filename: "secondary_model.h5"
-  history_filename: "history.pickle"
+  best_model_filename: "trained_model.h5"
+  secondary_model_filename: "dev_only_secondary_model.h5"
+  history_filename: "dev_only_history.pickle"
   embedding_size: 128
   batch_size: 16384
-  epochs: 30
+  epochs: 3
   validation_split: 0.1
 
 

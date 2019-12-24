@@ -48,7 +48,7 @@ def run_train_model():
     model.save(final_output_path)
 
     pickle_out = open(history_path, "wb")
-    pickle.dump(history, pickle_out)
+    pickle.dump(history, pickle_out, protocol=4)
     pickle_out.close()
 
 

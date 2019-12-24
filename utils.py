@@ -3,12 +3,12 @@ import logging
 import confuse
 from typing import List
 
-default_config_path = "config/config_test.yaml"
+default_config_path = "config/config_default.yaml"
 
 
 def load_config(path: str = default_config_path):
     config = confuse.Configuration("business-individual-classifier", __name__)
-    config.set_file(path)  # <-- Did you add the correct config file?
+    config.set_file(path)
     return config
 
 
