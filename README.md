@@ -20,7 +20,7 @@ A character/byte-level model (tokens correspond to utf8 code for each character 
 
 ### Data
 
-#### Faker artificial name generator:
+#### Faker artificial name generator (for testing):
 - https://pypi.org/project/Faker/
 
 #### Linkedin Business names :
