@@ -1,7 +1,20 @@
 # business-individual-classifier
 
 ## About
-Classifier for business and individual names
+
+Classifies strings corresponding to names into businesses or individuals.
+
+Uses a character/byte-level deep learning model (LSTM trained in Tensoeflow). 
+The model was trained on approximately 7 million unique business names from LinkedIn, and 7 million distinct individuals names from IMDB.
+It achieved a 95% accuracy based upon a held-out validation set from the same distribution.
+
+A character/byte-level model (tokens correspond to utf8 code for each character in the input string) was selected because:
+
+- The number of tokens is much smaller than a more typical word-level model (approximately 200 in our case, Vs hundreds of thousands in a word level model). This resulted in a 30x reduction in trained model size, and significant simplification in preprocessing, expected to improve in-use performance.
+- There is no 'out of lexicon' problem for words not in the training set
+- Similar word roots, and misspellings not included in the training set can still be classified due to the existing context of other characters
+- The model could be extended quite simply to use non-latin alphabet characters
+
 
 ## References
 
