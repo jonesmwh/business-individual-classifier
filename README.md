@@ -4,7 +4,7 @@
 
 Classifies strings corresponding to names into businesses or individuals.
 
-Uses a character/byte-level deep learning model (LSTM trained in Tensoeflow). 
+Uses a character/byte-level deep learning model (LSTM trained in Tensorflow). 
 The model was trained on approximately 7 million unique business names from LinkedIn, and 7 million distinct individuals names from IMDB.
 It achieved a 95% accuracy based upon a held-out validation set from the same distribution.
 
@@ -14,7 +14,13 @@ A character/byte-level model (tokens correspond to utf8 code for each character 
 - There is no 'out of lexicon' problem for words not in the training set
 - Similar word roots, and misspellings not included in the training set can still be classified due to the existing context of other characters
 - The model could be extended quite simply to use non-latin alphabet characters
+## Usage
 
+- cleanse_and_tokenize.py	: Cleanse and tokenize pre-existing raw data from IMDB and Linkeding busienss names (see Data section below)
+- train_model.py : Train LSTM deep lerning model
+- validate_model.py	: Calculate accuracy metrics (F1 score, precision, recall) for trained model based upon held out validation dataset
+- classify_names.py	: Example script for using trained model to classify a list of names
+- generate_raw_names.py	: Generate dummy raw data sets for testing purposes
 
 ## References
 
