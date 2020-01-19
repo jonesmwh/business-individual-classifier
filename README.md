@@ -6,7 +6,7 @@ Classifies strings corresponding to names into businesses or individuals.
 
 Uses a character/byte-level deep learning model (LSTM trained in Tensorflow). 
 The model was trained on approximately 7 million unique business names from LinkedIn, and 7 million distinct individuals names from IMDB.
-It achieved a 95% accuracy based upon a held-out validation set from the same distribution.
+It achieved a 95% accuracy (F1 score) based upon a held-out validation set from the same distribution.
 
 A character/byte-level model (tokens correspond to utf8 code for each character in the input string) was selected because:
 

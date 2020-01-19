@@ -6,7 +6,8 @@ rel_paths:
   interim_debug_root: "data/interim/"
 
 generate_raw_names:
-  output_filename: "individuals_generated.csv"
+  individual_filename: "individuals_generated.csv"
+  business_filename: "businesses_generated.csv"
   name_count: 20
 
 cleanse_and_tokenize:
