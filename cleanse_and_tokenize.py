@@ -22,6 +22,7 @@ output_dir = config["rel_paths"]["cleansed_data_root"].get(str)
 interim_dir = config["rel_paths"]["interim_debug_root"].get(str)
 output_path = output_dir + config["cleanse_and_tokenize"]["output_filename"].get(str)
 max_features = config["cleanse_and_tokenize"]["encoding_space_size"].get(int)
+min_length = config["cleanse_and_tokenize"]["min_length"].get(int)
 
 name_col = "name"
 y_col = "is_business"
@@ -71,14 +72,15 @@ def remove_char(original: str) -> str:
 
 
 def preprocess_raw_data(data_frame: pd.DataFrame) -> pd.DataFrame:
-    # todo: add min length criterion, filter out individual names which contain numbers
     preprocessed = data_frame.\
         applymap(str).\
         dropna().\
         apply(lambda x: x.str.lower()).\
         applymap(lambda raw_string: remove_invalid_characters(raw_string))
 
-    preprocessed = preprocessed[preprocessed[name_col] != ""].drop_duplicates()
+    mask = (preprocessed[name_col].str.len() >= min_length) & (preprocessed[name_col] != "")
+    preprocessed = preprocessed.loc[mask].drop_duplicates()
+
     return preprocessed
 
 
