@@ -10,6 +10,8 @@ import h5py
 import os
 import re
 from utils import list_to_csv, init_logger, encode, pad_token_list, load_config
+import random
+
 
 config = load_config()
 
@@ -46,9 +48,31 @@ def remove_invalid_characters(input_text: str) -> str:
     return text_valid_chars_only
 
 
-def preprocess_raw_data(data_frame: pd.DataFrame) -> pd.DataFrame:
+def introduce_misspellings(names: pd.DataFrame) -> pd.DataFrame:
+    names[name_col] = names[name_col].map(lambda original_name: remove_random_characters(name=original_name, no_chars=2))
+    return names
 
-    preprocessed =  data_frame .\
+
+def remove_random_characters(name: str, no_chars: int) -> str:
+    if no_chars == 0:
+        return name
+    else:
+        updated_name = remove_char(name)
+        return remove_random_characters(updated_name, no_chars - 1)
+
+
+def remove_char(original: str) -> str:
+    if len(original) > 1:
+        index = random.randint(0, len(original)-1)
+        less_one_char = original[:index] + original[index+1:]
+        return less_one_char
+    else:
+        return original
+
+
+def preprocess_raw_data(data_frame: pd.DataFrame) -> pd.DataFrame:
+    # todo: add min length criterion, filter out individual names which contain numbers
+    preprocessed = data_frame.\
         applymap(str).\
         dropna().\
         apply(lambda x: x.str.lower()).\
@@ -93,11 +117,13 @@ def generate_model_input(data: pd.DataFrame) -> (np.ndarray, List[str]):
     return X, y
 
 
-def write_interim_out_csv(X_train, X_test, y_train: List[str], y_test: List[str], train, test):
+def write_interim_out_csv(X_train, X_test, X_test_mutated, y_train: List[str], y_test: List[str], train, test, test_mutated):
     train.to_csv(interim_dir + "train_untokenized.csv", index=False, header=False)
     test.to_csv(interim_dir + "test_untokenized.csv", index=False, header=False)
+    test_mutated.to_csv(interim_dir + "test_mutated_untokenized.csv", index=False, header=False)
     np.savetxt(interim_dir + "X_train.csv", X_train, delimiter=",", fmt="%i")
     np.savetxt(interim_dir + "X_test.csv", X_test, delimiter=",", fmt="%i")
+    np.savetxt(interim_dir + "X_test_mutated.csv", X_test_mutated, delimiter=",", fmt="%i")
     list_to_csv(y_train, interim_dir + "y_train.csv")
     list_to_csv(y_test, interim_dir + "y_test.csv")
 
@@ -111,15 +137,16 @@ def run_cleanse_tokenize():
     business_names[y_col] = 1
     individual_names[y_col] = 0
 
-    combined_names = business_names.append(individual_names).drop_duplicates().dropna().reindex()
-    train = combined_names.copy().sample(frac=0.8, random_state=42)
-    test = combined_names.copy().drop(train.index).sample(frac=1).reset_index(drop=True)
+    combined_names = business_names.append(individual_names, ignore_index=True).drop_duplicates().dropna().reset_index(drop=True)
+    train, test = train_test_split(combined_names, test_size=0.1, random_state=42)
+    test_mutated = introduce_misspellings(test.copy())
 
     (X_train, y_train) = generate_model_input(train)
     (X_test, y_test) = generate_model_input(test)
+    (X_test_mutated, y_test_mutated) = generate_model_input(test_mutated)
 
     if write_out_interim_data:
-        write_interim_out_csv(X_train, X_test, y_train, y_test, train, test)
+        write_interim_out_csv(X_train, X_test, X_test_mutated, y_train, y_test, train, test, test_mutated)
 
     if stats_out:
         output_stats(test, train, business_names, individual_names)
