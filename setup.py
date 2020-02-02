@@ -1,4 +1,4 @@
 from setuptools import setup, find_packages
 
 setup(name="business-individual-classifier", packages=find_packages(), install_requires=['pytest','sklearn','PyYAML', 'faker', 'confuse', 'keras',
-                                                                                         'numpy', 'pandas', 'h5py', 'tensorflow==2.0.0'])
+                                                                                         'numpy', 'pandas', 'h5py', 'tensorflow==2.0.1'])
