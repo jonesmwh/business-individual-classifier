@@ -7,11 +7,12 @@ Accurately classify the names of businesses/organisations and people/individuals
 When parsing real-world poor quality data, sometimes necessary to classify whether the entity in a "name" field corresponds to an organisation or a person. Common approaches to classify names in this context are:
   - Rules based systems e.g. searching for terms such as "Mrs." or "Ltd."
   - ML classifier models which learn the probability of word tokens taken from a labelled set of business/individual names
+
 Neither of these approaches are resiliant when dealing with poor data quality e.g. misspellings and typos, as this effectively introduces new tokens which were not present in the training data - e.g. the model has no way to infer that the business "Tom's Co**n**puters" is similar to the phrase "Jack's Co**m**puters" that was included in the training set.
 
 This model uses a character level deep learning model, meaning it can infer that unseen words such as "Co**n**puters" are similar to the word "Computers" that it has trained on. This also has the advantage that the model could be trained on words with non-latin characters with little modification, resulting in a global name classification model. 
 
-## Details
+## Technical Details
 
 Classifies strings corresponding to names into businesses or individuals.
 
