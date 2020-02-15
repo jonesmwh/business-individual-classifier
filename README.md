@@ -10,7 +10,7 @@ When parsing real-world poor quality data, sometimes necessary to classify wheth
 
 Neither of these approaches are resiliant when dealing with poor data quality e.g. misspellings and typos, as this effectively introduces new tokens which were not present in the training data - e.g. the model has no way to infer that the business "Tom's Co**n**puters" is similar to the phrase "Jack's Co**m**puters" that was included in the training set.
 
-This model uses a character level deep learning model, meaning it can infer that unseen words such as "Co**n**puters" are similar to the word "Computers" that it has trained on. This also has the advantage that the model could be trained on words with non-latin characters with little modification, resulting in a global name classification model. 
+This model uses a character/byte level deep learning model, meaning it can infer that unseen words such as "Co**n**puters" are similar to the word "Computers" that it has trained on. This also has the advantage that the model could be trained on words with non-latin characters with little modification, resulting in a global name classification model. 
 
 ## Technical Details
 
