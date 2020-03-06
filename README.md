@@ -8,7 +8,7 @@ When parsing real-world poor quality data, sometimes necessary to classify wheth
   - Rules based systems e.g. searching for terms such as "Mrs." or "Ltd."
   - ML classifier models which learn the probability of word tokens taken from a labelled set of business/individual names
 
-Neither of these approaches are resiliant when dealing with poor data quality e.g. misspellings and typos, as this effectively introduces new tokens which were not present in the training data - e.g. the model has no way to infer that the business "Tom's Co**n**puters" is similar to the phrase "Jack's Co**m**puters" that was included in the training set.
+Neither of these approaches are resilient when dealing with poor data quality e.g. misspellings and typos, as this effectively introduces new tokens which were not present in the training data - e.g. the model has no way to infer that the business "Tom's Co**n**puters" is similar to the phrase "Jack's Co**m**puters" that was included in the training set.
 
 This model uses a character/byte level deep learning model, meaning it can infer that unseen words such as "Co**n**puters" are similar to the word "Computers" that it has trained on. This also has the advantage that the model could be trained on words with non-latin characters with little modification, resulting in a global name classification model. 
 
